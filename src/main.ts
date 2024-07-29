@@ -8,15 +8,7 @@ dotenv.config();
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
-
-    app.use(
-        cors({
-            origin: '*',
-            methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-            credentials: true,
-            allowedHeaders: 'Content-Type, Authorization',
-        }),
-    );
+    app.enableCors();
 
     await app.listen(8000);
 }
