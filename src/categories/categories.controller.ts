@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { Category } from './schemas/category.schema';
-import { AuthGuard } from 'src/guards/auth.guard';
+import { AuthGuard } from '../guards/auth.guard';
 
 @UseGuards(AuthGuard)
 @Controller('categories')
