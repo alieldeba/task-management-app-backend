@@ -18,9 +18,8 @@ export class UsersService {
         return this.userModel.findById(id).exec();
     }
 
-    // TODO: delete any
-    async getOneByUsername(username: string): Promise<any> {
-        return this.userModel.findOne({ username }).exec();
+    async getOneByEmail(email: string): Promise<any> {
+        return this.userModel.findOne({ email }).exec();
     }
 
     async create(
