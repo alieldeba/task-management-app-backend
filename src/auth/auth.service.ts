@@ -1,8 +1,10 @@
+import { RegisterDto } from './dto/RegisterDto';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { User } from 'src/users/schemas/user.schema';
+import { User } from '../schemas/user.schema';
+import { UsersService } from '../users/users.service';
+import { LoginDto } from './dto/LoginDto';
 
 @Injectable()
 export class AuthService {
@@ -11,11 +13,11 @@ export class AuthService {
         private jwtService: JwtService,
     ) {}
 
-    async signIn(
-        email: string,
-        password: string,
-    ): Promise<{ access_token: string }> {
-        const user = await this.usersService.getOneByEmail(email);
+    async login(
+        loginDto: LoginDto,
+    ): Promise<{ access_token: string; user: User }> {
+        const { email, password } = loginDto;
+        const user = await this.usersService.findOneByEmail(email);
         if (!user || !(await bcrypt.compare(password, user.password))) {
             throw new UnauthorizedException();
         }
@@ -25,21 +27,14 @@ export class AuthService {
         };
         return {
             access_token: await this.jwtService.signAsync(payload),
+            user,
         };
     }
 
     async register(
-        username: string,
-        email: string,
-        linkedinURL: string,
-        password: string,
+        registerDto: RegisterDto,
     ): Promise<{ message: string; user: User }> {
-        const user = await this.usersService.create(
-            username,
-            email,
-            linkedinURL,
-            password,
-        );
+        const user = await this.usersService.create(registerDto);
         return {
             message: 'User registered, Log in to your account',
             user,

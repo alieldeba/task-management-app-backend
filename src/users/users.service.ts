@@ -1,8 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UseGuards } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { User, UserDocument } from './schemas/user.schema';
+import { User, UserDocument } from '../schemas/user.schema';
 import * as bcrypt from 'bcrypt';
+import { AuthGuard } from '../guards/auth.guard';
+import { CreateUserDto } from './dto/CreateUserDTO';
 
 @Injectable()
 export class UsersService {
@@ -10,36 +12,33 @@ export class UsersService {
         @InjectModel(User.name) private userModel: Model<UserDocument>,
     ) {}
 
-    async getAll(): Promise<User[]> {
+    async findAll(): Promise<User[]> {
         return this.userModel.find().exec();
     }
 
-    async getOne(id: string): Promise<User> {
-        return this.userModel.findById(id).exec();
+    async findOne(id: string): Promise<User> {
+        return this.userModel.findById(id).populate('tasks').exec();
     }
 
-    async getOneByEmail(email: string): Promise<any> {
+    async findOneByEmail(email: string): Promise<any> {
         return this.userModel.findOne({ email }).exec();
     }
 
-    async create(
-        username: string,
-        email: string,
-        linkedinURL: string,
-        password: string,
-    ): Promise<User> {
+    async create(createUserDto: CreateUserDto): Promise<User> {
         const salt = 10;
-        const hashedPassword = await bcrypt.hash(password, salt);
+        const hashedPassword = await bcrypt.hash(createUserDto.password, salt);
         const newUser = new this.userModel({
-            username,
-            email,
-            linkedinURL,
+            ...createUserDto,
             password: hashedPassword,
         });
         return newUser.save();
     }
 
+    @UseGuards(AuthGuard)
     async update(id: string, updatedUser: Partial<User>): Promise<User> {
+        // To prevent user from changing his password
+        delete updatedUser.password;
+
         return this.userModel
             .findByIdAndUpdate(id, updatedUser, { new: true })
             .exec();

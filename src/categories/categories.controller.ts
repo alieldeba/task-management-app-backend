@@ -10,8 +10,10 @@ import {
     Request,
 } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
-import { Category } from './schemas/category.schema';
+import { Category } from '../schemas/category.schema';
 import { AuthGuard } from '../guards/auth.guard';
+import { RequestPayload } from '../types';
+import { CreateCategoryDto } from './dto/CreateCategoryDto';
 
 @UseGuards(AuthGuard)
 @Controller('categories')
@@ -30,15 +32,13 @@ export class CategoriesController {
 
     @Post()
     async create(
-        @Request() request,
+        @Request() request: RequestPayload,
         @Body()
-        categoryData: {
-            name: string;
-        },
+        createCategoryDto: CreateCategoryDto,
     ): Promise<Category> {
         return this.categoriesService.create(
             request.user.userId,
-            categoryData.name,
+            createCategoryDto,
         );
     }
 

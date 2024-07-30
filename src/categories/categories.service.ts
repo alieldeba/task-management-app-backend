@@ -1,7 +1,8 @@
+import { CreateCategoryDto } from './dto/CreateCategoryDto';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Category, CategoryDocument } from './schemas/category.schema';
+import { Category, CategoryDocument } from '../schemas/category.schema';
 
 @Injectable()
 export class CategoriesService {
@@ -18,10 +19,13 @@ export class CategoriesService {
         return this.categoryModel.findById(id).exec();
     }
 
-    async create(user: any, name: string): Promise<Category> {
+    async create(
+        userId: string,
+        createCategoryDto: CreateCategoryDto,
+    ): Promise<Category> {
         const newCategory = new this.categoryModel({
-            user,
-            name,
+            userId,
+            ...createCategoryDto,
         });
         return newCategory.save();
     }
