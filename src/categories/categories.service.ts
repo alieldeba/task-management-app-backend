@@ -3,12 +3,15 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Category, CategoryDocument } from '../schemas/category.schema';
+import { User, UserDocument } from '../schemas/user.schema';
 
 @Injectable()
 export class CategoriesService {
     constructor(
         @InjectModel(Category.name)
         private categoryModel: Model<CategoryDocument>,
+        @InjectModel(User.name)
+        private userModel: Model<UserDocument>,
     ) {}
 
     async findAll(): Promise<Category[]> {
@@ -23,11 +26,21 @@ export class CategoriesService {
         userId: string,
         createCategoryDto: CreateCategoryDto,
     ): Promise<Category> {
+        const currentUser = await this.userModel.findById(userId);
         const newCategory = new this.categoryModel({
-            userId,
             ...createCategoryDto,
+            userId,
         });
-        return newCategory.save();
+        const savedCategory = await newCategory.save();
+
+        // add category to user's data object
+        await currentUser.updateOne({
+            $push: {
+                categories: savedCategory._id,
+            },
+        });
+
+        return savedCategory;
     }
 
     async update(

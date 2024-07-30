@@ -1,5 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema } from 'mongoose';
+import { Task } from './task.schema';
+import { Category } from './category.schema';
 
 export type UserDocument = User & Document;
 
@@ -18,7 +20,10 @@ export class User {
     password: string;
 
     @Prop([{ type: MongooseSchema.Types.ObjectId, ref: 'Task' }])
-    tasks: MongooseSchema.Types.ObjectId[]; // Optional: Array of task references
+    tasks: Task[];
+
+    @Prop([{ type: MongooseSchema.Types.ObjectId, ref: 'Category' }])
+    categories: Category[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

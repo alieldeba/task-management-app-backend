@@ -17,7 +17,7 @@ export class TasksService {
     }
 
     async findOne(id: string): Promise<Task> {
-        return this.taskModel.findById(id).exec();
+        return this.taskModel.findById(id).populate('categories').exec();
     }
 
     async create(userId: string, createTaskDto: CreateTaskDto): Promise<Task> {
@@ -27,6 +27,7 @@ export class TasksService {
             ...createTaskDto,
             userId,
         });
+
         const savedTask = await newTask.save();
 
         // add task to user's data object
@@ -36,7 +37,7 @@ export class TasksService {
             },
         });
 
-        return savedTask;
+        return savedTask.populate('categories');
     }
 
     async update(id: string, updatedTask: Partial<Task>): Promise<Task> {

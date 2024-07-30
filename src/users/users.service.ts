@@ -17,7 +17,10 @@ export class UsersService {
     }
 
     async findOne(id: string): Promise<User> {
-        return this.userModel.findById(id).populate('tasks').exec();
+        return this.userModel
+            .findById(id)
+            .populate(['tasks', 'categories'])
+            .exec();
     }
 
     async findOneByEmail(email: string): Promise<any> {

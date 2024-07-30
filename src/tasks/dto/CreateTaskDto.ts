@@ -1,4 +1,4 @@
-import { IsIn, IsNotEmpty } from 'class-validator';
+import { IsIn, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateTaskDto {
     @IsNotEmpty()
@@ -8,9 +8,11 @@ export class CreateTaskDto {
     description: string;
 
     @IsNotEmpty()
-    @IsNotEmpty()
     @IsIn(['Todo', 'Working', 'Done'])
     status: string;
+
+    @IsOptional()
+    categories: string[];
 
     @IsNotEmpty()
     dueDate: Date;
