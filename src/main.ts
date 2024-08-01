@@ -12,7 +12,7 @@ async function bootstrap() {
 
     app.use(
         cors({
-            origin: 'https://localhost:3000',
+            origin: '*',
             methods: ['GET', 'POST', 'PUT', 'DELETE'],
             credentials: true, // If you need to send cookies or HTTP authentication information
         }),
