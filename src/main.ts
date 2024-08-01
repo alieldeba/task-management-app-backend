@@ -2,23 +2,22 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as dotenv from 'dotenv';
 import { ValidationPipe } from '@nestjs/common';
-import * as cors from 'cors';
 
 // Load environment variables
 dotenv.config();
 
 async function bootstrap() {
-    const app = await NestFactory.create(AppModule);
+    const app = await NestFactory.create(AppModule, { cors: true });
 
-    app.use(
-        cors({
-            origin: '*',
-            methods: ['GET', 'POST', 'PUT', 'DELETE'],
-            credentials: true, // If you need to send cookies or HTTP authentication information
-        }),
-    );
+    // To fix cors error
+    app.use((req: any, res: any, next: any) => {
+        res.header('Access-Control-Allow-Origin', '*');
+        res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+        res.header('Access-Control-Allow-Headers', 'Content-Type, Accept');
+        next();
+    });
 
     app.useGlobalPipes(new ValidationPipe());
-    await app.listen(8000);
+    await app.listen(3000);
 }
 bootstrap();
