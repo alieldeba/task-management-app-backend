@@ -5,7 +5,8 @@ import { User, UserDocument } from '../schemas/user.schema';
 import * as bcrypt from 'bcrypt';
 import { AuthGuard } from '../guards/auth.guard';
 import { CreateUserDto } from './dto/CreateUserDTO';
-import { By, Builder } from 'selenium-webdriver';
+import { Builder, By, until } from 'selenium-webdriver';
+import chrome from 'selenium-webdriver/chrome';
 
 @Injectable()
 export class UsersService {
@@ -20,25 +21,48 @@ export class UsersService {
     async findLinkedinProfile(
         link: string,
     ): Promise<{ username: string; image: string }> {
+        let driver: any;
         try {
-            console.log('1');
-            const driver = await new Builder().forBrowser('chrome').build();
+            const options = new chrome.Options();
+            options.addArguments('--disable-extensions');
+            options.addArguments('--headless');
+
+            driver = await new Builder()
+                .forBrowser('chrome')
+                .setChromeOptions(options)
+                .build();
 
             await driver.get(link);
-            console.log('2');
 
-            const t = await driver.findElement(By.tagName('h1')).getText();
-            console.log('3');
+            // Wait until the username element is present (with a timeout)
+            const usernameElement = await driver.wait(
+                until.elementLocated(By.tagName('h1')),
+                10000,
+            );
+            const username = await usernameElement.getText();
 
-            console.log(t);
+            // Adjust the selector as per the actual LinkedIn profile page structure
+            const imageElement = await driver.findElement(
+                By.css('img.profile-pic'),
+            );
+            const image = await imageElement.getAttribute('src');
+
+            console.log(username);
+            return { username, image };
         } catch (error) {
-            console.log(error);
+            console.error(
+                'Error occurred while fetching LinkedIn profile:',
+                error,
+            );
+            return {
+                username: 'unknown',
+                image: 'unknown',
+            };
+        } finally {
+            if (driver) {
+                await driver.quit();
+            }
         }
-
-        return {
-            username: 'alieldeba',
-            image: 'https://github.com/alieldeba.png',
-        };
     }
 
     async findOne(id: string): Promise<User> {

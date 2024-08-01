@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from '../schemas/user.schema';
-import { CreateUserDto } from './dto/CreateUserDTO';
+import { CreateUserDto } from './dto/CreateUserDto';
 import { AuthGuard } from '../guards/auth.guard';
 
 @UseGuards(AuthGuard)
