@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 import { User, UserDocument } from '../schemas/user.schema';
 import * as bcrypt from 'bcrypt';
 import { AuthGuard } from '../guards/auth.guard';
-import { CreateUserDto } from './dto/CreateUserDTO';
+import { CreateUserDto } from './dto/CreateUserDto';
 import { Builder, By, until } from 'selenium-webdriver';
 import chrome from 'selenium-webdriver/chrome';
 
