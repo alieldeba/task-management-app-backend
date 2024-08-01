@@ -28,15 +28,12 @@ npm install
 ```
 
 3. Setup enviroment variables
-create .env file at the root directory
-
-```env
-# DATABASE
-DATABASE_URI="mongodb+srv://alieldeba:alisameh2007@cluster0.4o7ttzm.mongodb.net/"
-```
+<br />
+create .env file at the root directory and put DATABASE_URI variable in it
 
 4. Development
-   To start the development server, use the following command:
+<br />
+To start the development server, use the following command:
 
 ```bash
 npm run start:dev
