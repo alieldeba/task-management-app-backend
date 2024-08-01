@@ -7,6 +7,7 @@ import { AuthGuard } from '../guards/auth.guard';
 import { CreateUserDto } from './dto/CreateUserDto';
 import { Builder, By, until } from 'selenium-webdriver';
 import chrome from 'selenium-webdriver/chrome';
+import * as path from 'path';
 
 @Injectable()
 export class UsersService {
@@ -18,50 +19,74 @@ export class UsersService {
         return await this.userModel.find().exec();
     }
 
-    async findLinkedinProfile(
-        link: string,
-    ): Promise<{ username: string; image: string }> {
-        let driver: any;
+    async findLinkedinProfile(link: string): Promise<any> {
+        const chromeDriverPath = path.resolve('../chromedriver.exe');
+        const options = new chrome.Options(); //! Application throws error here
+
+        options.addArguments('headless');
+        options.addArguments('disable-gpu');
+        options.addArguments('no-sandbox');
+        options.addArguments('disable-dev-shm-usage');
+
+        const driver = await new Builder()
+            .forBrowser('chrome')
+            .setChromeOptions(options)
+            .setChromeService(new chrome.ServiceBuilder(chromeDriverPath))
+            .build();
+
         try {
-            const options = new chrome.Options();
-            options.addArguments('--disable-extensions');
-            options.addArguments('--headless');
-
-            driver = await new Builder()
-                .forBrowser('chrome')
-                .setChromeOptions(options)
-                .build();
-
             await driver.get(link);
 
-            // Wait until the username element is present (with a timeout)
-            const usernameElement = await driver.wait(
-                until.elementLocated(By.tagName('h1')),
+            await driver.wait(
+                until.elementLocated(
+                    By.css(
+                        "button[data-tracking-control-name='auth_wall_desktop_profile-login-toggle']",
+                    ),
+                ),
                 10000,
             );
-            const username = await usernameElement.getText();
 
-            // Adjust the selector as per the actual LinkedIn profile page structure
-            const imageElement = await driver.findElement(
-                By.css('img.profile-pic'),
-            );
-            const image = await imageElement.getAttribute('src');
+            // Optionally, log in if required
+            await driver
+                .findElement(
+                    By.css(
+                        "button[data-tracking-control-name='auth_wall_desktop_profile-login-toggle']",
+                    ),
+                )
+                .click();
 
-            console.log(username);
-            return { username, image };
-        } catch (error) {
-            console.error(
-                'Error occurred while fetching LinkedIn profile:',
-                error,
+            await driver.wait(
+                until.elementLocated(By.id('session_key')),
+                10000,
             );
-            return {
-                username: 'unknown',
-                image: 'unknown',
-            };
+            await driver.wait(
+                until.elementLocated(By.id('session_password')),
+                10000,
+            );
+            await driver.wait(
+                until.elementLocated(By.id('button[type="submit"]')),
+                10000,
+            );
+
+            await driver.findElement(By.id('session_key')).sendKeys('<email>');
+
+            await driver
+                .findElement(By.id('session_password'))
+                .sendKeys('<password>');
+
+            await driver.findElement(By.css('button[type="submit"]')).click();
+
+            await driver.wait(until.elementLocated(By.css('h1')), 10000);
+
+            // Find the <h1> element and get its text
+            const nameElement = await driver.findElement(By.css('h1'));
+            const username = await nameElement.getText();
+
+            return { username };
+        } catch (error: any) {
+            return { error: error.message };
         } finally {
-            if (driver) {
-                await driver.quit();
-            }
+            await driver.quit();
         }
     }
 
