@@ -35,6 +35,7 @@
         "cors": "^2.8.5",
         "dotenv": "^16.4.5",
         "geckodriver": "^4.4.2",
+        "helmet": "^7.1.0",
         "jsonwebtoken": "^9.0.2",
         "mongoose": "^8.5.1",
         "reflect-metadata": "^0.2.2",
