@@ -19,6 +19,7 @@ export class UsersService {
         return await this.userModel.find().exec();
     }
 
+    //! Deprecated function
     async findLinkedinProfile(link: string): Promise<any> {
         const chromeDriverPath = path.resolve('../chromedriver.exe');
         const options = new chrome.Options(); //! Application throws error here
