@@ -22,6 +22,10 @@ export class CategoriesService {
         return this.categoryModel.findById(id).exec();
     }
 
+    async findCategoriesByUser(id: string): Promise<Category[]> {
+        return this.categoryModel.find({ userId: id }).exec();
+    }
+
     async create(
         userId: string,
         createCategoryDto: CreateCategoryDto,

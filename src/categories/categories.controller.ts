@@ -30,6 +30,11 @@ export class CategoriesController {
         return this.categoriesService.findOne(id);
     }
 
+    @Get('/user/:id')
+    async findCategoriesByUser(@Param('id') id: string): Promise<Category[]> {
+        return this.categoriesService.findCategoriesByUser(id);
+    }
+
     @Post()
     async create(
         @Request() request: RequestPayload,

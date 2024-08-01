@@ -6,11 +6,14 @@ import {
     Delete,
     Body,
     Param,
+    UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from '../schemas/user.schema';
 import { CreateUserDto } from './dto/CreateUserDTO';
+import { AuthGuard } from '../guards/auth.guard';
 
+@UseGuards(AuthGuard)
 @Controller('users')
 export class UsersController {
     constructor(private readonly usersService: UsersService) {}
@@ -18,6 +21,13 @@ export class UsersController {
     @Get()
     async findAll(): Promise<User[]> {
         return this.usersService.findAll();
+    }
+
+    @Get('/linkedin-profile')
+    async findLinkedinProfile(
+        @Body() link: string,
+    ): Promise<{ username: string; image: string }> {
+        return this.usersService.findLinkedinProfile(link);
     }
 
     @Get(':id')

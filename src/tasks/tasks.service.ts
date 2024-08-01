@@ -20,6 +20,13 @@ export class TasksService {
         return this.taskModel.findById(id).populate('categories').exec();
     }
 
+    async findTasksByUser(id: string): Promise<Task[]> {
+        return this.taskModel
+            .find({ userId: id })
+            .populate('categories')
+            .exec();
+    }
+
     async create(userId: string, createTaskDto: CreateTaskDto): Promise<Task> {
         const currentUser = await this.userModel.findById(userId);
 

@@ -30,6 +30,11 @@ export class TasksController {
         return this.tasksService.findOne(id);
     }
 
+    @Get('/user/:id')
+    async findTasksByUser(@Param('id') id: string): Promise<Task[]> {
+        return this.tasksService.findTasksByUser(id);
+    }
+
     @Post()
     async create(
         @Request() request: RequestPayload,
