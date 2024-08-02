@@ -4,7 +4,7 @@ export class CreateTaskDto {
     @IsNotEmpty()
     name: string;
 
-    @IsNotEmpty()
+    @IsOptional()
     description: string;
 
     @IsNotEmpty()

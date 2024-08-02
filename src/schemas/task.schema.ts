@@ -10,7 +10,7 @@ export class Task {
     @Prop({ required: true })
     name: string;
 
-    @Prop({ required: true })
+    @Prop({ required: false })
     description: string;
 
     @Prop({ enum: ['Todo', 'Working', 'Done'], default: 'Todo' })
