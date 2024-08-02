@@ -13,15 +13,15 @@ export class TasksService {
     ) {}
 
     async findAll(userId: string): Promise<Task[]> {
-        return this.taskModel.find({ userId }).exec();
+        return await this.taskModel.find({ userId }).exec();
     }
 
     async findOne(id: string): Promise<Task> {
-        return this.taskModel.findById(id).populate('categories').exec();
+        return await this.taskModel.findById(id).populate('categories').exec();
     }
 
     async findTasksByUser(id: string): Promise<Task[]> {
-        return this.taskModel
+        return await this.taskModel
             .find({ userId: id })
             .populate('categories')
             .exec();
@@ -44,20 +44,20 @@ export class TasksService {
             },
         });
 
-        return savedTask.populate('categories');
+        return await savedTask.populate('categories');
     }
 
     async update(id: string, updatedTask: Partial<Task>): Promise<Task> {
-        return this.taskModel
+        return await this.taskModel
             .findByIdAndUpdate(id, updatedTask, { new: true })
             .exec();
     }
 
     async delete(id: string): Promise<Task> {
-        return this.taskModel.findByIdAndDelete(id).exec();
+        return await this.taskModel.findByIdAndDelete(id).exec();
     }
 
     async findByUserId(userId: string): Promise<Task[]> {
-        return this.taskModel.find({ userId }).exec();
+        return await this.taskModel.find({ userId }).exec();
     }
 }

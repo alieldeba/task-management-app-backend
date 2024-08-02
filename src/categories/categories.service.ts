@@ -15,15 +15,15 @@ export class CategoriesService {
     ) {}
 
     async findAll(): Promise<Category[]> {
-        return this.categoryModel.find().exec();
+        return await this.categoryModel.find().exec();
     }
 
     async findOne(id: string): Promise<Category> {
-        return this.categoryModel.findById(id).exec();
+        return await this.categoryModel.findById(id).exec();
     }
 
     async findCategoriesByUser(id: string): Promise<Category[]> {
-        return this.categoryModel.find({ userId: id }).exec();
+        return await this.categoryModel.find({ userId: id }).exec();
     }
 
     async create(
@@ -51,12 +51,12 @@ export class CategoriesService {
         id: string,
         updatedCategory: Partial<Category>,
     ): Promise<Category> {
-        return this.categoryModel
+        return await this.categoryModel
             .findByIdAndUpdate(id, updatedCategory, { new: true })
             .exec();
     }
 
     async delete(id: string): Promise<Category> {
-        return this.categoryModel.findByIdAndDelete(id).exec();
+        return await this.categoryModel.findByIdAndDelete(id).exec();
     }
 }
